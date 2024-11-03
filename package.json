@@ -1,0 +1,35 @@
+{
+  "name": "bdsm",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/bdsm.umd.cjs",
+  "module": "./dist/bdsm.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.14.0",
+    "@types/node": "^22.8.7",
+    "eslint": "^9.14.0",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.11.0",
+    "prettier": "3.3.3",
+    "typescript": "~5.6.2",
+    "typescript-eslint": "^8.12.2",
+    "vite": "^5.4.10"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/bdsm.js",
+      "require": "./dist/bdsm.umd.cjs"
+    }
+  }
+}
