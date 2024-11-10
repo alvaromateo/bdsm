@@ -7,23 +7,19 @@
     "skipLibCheck": true,
     "outDir": "dist",
 
-    /* Bundler mode */
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
     "noEmit": true,
+    "esModuleInterop": true,
 
-    /* Linting */
     "strict": true,
     "strictNullChecks": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
-
-    /* Vite */
-    "types": ["node", "vite/client"]
+    "noUncheckedSideEffectImports": true
   },
   "include": ["lib"],
   "exclude": ["node_modules", "dist"]

@@ -58,6 +58,8 @@ class Connection {
         console.error(`Request failed. Status: ${response.status}`);
         throw new ResponseNotOk(`Response status: ${response.status}`);
       }
+      // re-throw the error
+      throw error;
     }
 
     if (!response) {
