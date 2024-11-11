@@ -14,7 +14,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test": "jest"
+    "test": "jest --silent"
   },
   "devDependencies": {
     "@eslint/js": "^9.14.0",

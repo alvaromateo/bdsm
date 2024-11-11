@@ -62,10 +62,6 @@ class Connection {
       throw error;
     }
 
-    if (!response) {
-      throw new RequestNotSent('Response object is null');
-    }
-
     if (!response.ok) {
       throw new ResponseNotOk(`Response status: ${response.status}`);
     }
@@ -78,6 +74,8 @@ class Connection {
         console.error(error.message);
         throw new InvalidJSON('Could not parse JSON');
       }
+      // re-throw the error
+      throw error;
     }
 
     if (!json) {

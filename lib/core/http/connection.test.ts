@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import Connection from './connection';
-import { RequestFailure } from './connectionError';
+import { InvalidJSON, RequestFailure, RequestNotSent, ResponseNotOk } from './connectionError';
 
 const TEST_URL = 'http://localhost:3000/';
 const TEST_TIMEOUT = 150;
@@ -21,8 +21,8 @@ describe('Connection', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
     jest.runAllTimers();
+    jest.restoreAllMocks();
   });
 
   it('should set up its properties', () => {
@@ -105,13 +105,47 @@ describe('Connection', () => {
     return res;
   });
 
-  it('should throw RequestNotSent when request is aborted', () => {});
+  it('should throw RequestNotSent when request is aborted', async () => {
+    fetchMock!.mockImplementationOnce(() => {
+      throw TypeError('Type error');
+    });
+    const connection = new Connection(TEST_URL, TEST_TIMEOUT);
+    const res = connection
+      .get<DummyParsedResponse>('random', parseResponseMock)
+      .catch((error) => expect(error).toBeInstanceOf(RequestNotSent));
 
-  it('should throw RequestNotSent if there is no error but response is null', () => {});
+    jest.advanceTimersToNextTimer();
+    return res;
+  });
 
-  it('should throw RequestNotOk on status > 400', () => {});
+  it('should throw RequestNotOk on status > 400', async () => {
+    fetchMock!.mockResolvedValue(new Response('{}', { status: 401 }));
+    const connection = new Connection(TEST_URL, TEST_TIMEOUT);
+    const res = connection
+      .get<DummyParsedResponse>('random', parseResponseMock)
+      .catch((error) => expect(error).toBeInstanceOf(ResponseNotOk));
 
-  it('should throw InvalidJSON for any errors on parsing the response JSON', () => {});
+    jest.advanceTimersToNextTimer();
+    return res;
+  });
+
+  it('should throw InvalidJSON for any errors on parsing the response JSON', async () => {
+    fetchMock!.mockResolvedValueOnce(new Response('null', { status: 200 }));
+    fetchMock!.mockResolvedValueOnce(new Response('{', { status: 200 }));
+    const connection = new Connection(TEST_URL, TEST_TIMEOUT);
+
+    await connection
+      .get<DummyParsedResponse>('random', parseResponseMock)
+      .catch((error) => expect(error).toBeInstanceOf(InvalidJSON));
+    jest.advanceTimersToNextTimer();
+
+    await connection
+      .get<DummyParsedResponse>('random', parseResponseMock)
+      .catch((error) => expect(error).toBeDefined());
+    // can't do "expect(error).toBeInstanceOf(InvalidJSON)" because of this bug open to Jest
+    // https://github.com/jestjs/jest/issues/2549
+    jest.advanceTimersToNextTimer();
+  });
 });
 
 type DummyParsedResponse = { responseParsed: boolean };
