@@ -45,7 +45,10 @@ export const getTextWithoutTags = (text: string): string => {
         // opening a new tag
         const tagName = getTagName(text, index + 1);
         const endTag = getMatchingEnd(text, index + 1 + tagName.length);
-        stack.push(tagName);
+        // if it's a self closing tag don't push it to the stack
+        if (text[endTag - 1] !== '/') {
+          stack.push(tagName);
+        }
         index = endTag;
       }
     } else {
@@ -66,7 +69,7 @@ export const getTextWithoutTags = (text: string): string => {
  * @param text input text containing at least an HTML/XML tag.
  * @param start the index at which to start looking.
  */
-export const getMatchingEnd = (text: string, start: number): number => {
+export const getMatchingEnd = (text: string, start: number = 0): number => {
   let index = start;
   let found = false;
   let insideQuotes = false;
@@ -91,13 +94,13 @@ export const getMatchingEnd = (text: string, start: number): number => {
   return index;
 };
 
-const whiteSpaceChars = new Set(['\t', '\n', '\v', '\r', '\f', ' ']);
+const endTagNameChars = new Set(['\t', '\n', '\v', '\r', '\f', ' ', '/', '>']);
 
-export const getTagName = (text: string, start: number): string => {
+export const getTagName = (text: string, start: number = 0): string => {
   let index = start;
   const startName = index;
   // then get the name characters
-  while (index < text.length && !whiteSpaceChars.has(text[index])) {
+  while (index < text.length && !endTagNameChars.has(text[index])) {
     ++index;
   }
   if (startName === index) {
