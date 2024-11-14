@@ -1,10 +1,22 @@
 import { InvalidJSON, RequestNotSent, RequestFailure, ResponseNotOk } from './connectionError';
 import ResponseParser from './responseParser';
 
+/**
+ * This class represents a connection between 2 computers.
+ * The messages are send always in the direction of the computer that is running this code
+ * towards the target computer set when the Connection is created.
+ * The messages are HTTP requests (get, post).
+ */
 class Connection {
   target: URL;
   timeout: number; // ms
 
+  /**
+   * Creates a new connection instance.
+   *
+   * @param url the host url with whom the connection will be established.
+   * @param timeout max time in ms to wait for a reply from the target.
+   */
   constructor(url: string, timeout = 1000) {
     url = url.trim();
     // remove last '/' from the serverURL
@@ -16,6 +28,15 @@ class Connection {
     this.timeout = timeout;
   }
 
+  /**
+   * Sends a GET request to the target to obtain a response that is then parsed into an
+   * object ParsedResponse.
+   *
+   * @param path the path/endpoint to which the request will be sent.
+   * @param responseParser the method that is used to parse the response from the target.
+   * @param params any search parameters to append to the url.
+   * @returns a ParsedResponse instance.
+   */
   async get<ParsedResponse>(
     path: string,
     responseParser: ResponseParser<ParsedResponse>,
@@ -28,6 +49,16 @@ class Connection {
     return this.#fetchAndParseResponse(url, {}, responseParser);
   }
 
+  /**
+   * Sends a POST request to the target to obtain a response that is then parsed into an
+   * object ParsedResponse. This method accepts a body with a payload to be sent.
+   *
+   * @param path the path/endpoint to which the request will be sent.
+   * @param body the payload to be sent in the POST request.
+   * @param responseParser the method that is used to parse the response from the target.
+   * @param params any search parameters to append to the url.
+   * @returns a ParsedResponse instance.
+   */
   async post<ParsedResponse>(
     path: string,
     body: string,

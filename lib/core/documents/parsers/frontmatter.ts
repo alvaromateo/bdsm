@@ -1,5 +1,5 @@
 import { IDocumentParser, MetadataObj, ParserConfig } from '../parser';
-import { SolrDocument } from '../solrDocument';
+import { ISolrDocument } from '../solrDocument';
 
 export default class FrontMatterParser implements IDocumentParser {}
 

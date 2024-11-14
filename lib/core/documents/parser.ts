@@ -1,19 +1,19 @@
-import { SolrDocument } from './solrDocument';
+import { ISolrDocument } from './solrDocument';
 
-export interface IDocumentParser {
+export interface IDocumentParser<T extends string | Document> {
   baseBlogUrl: string;
-  parse: (document: string) => SolrDocument;
-  parserConfig: ParserConfig;
+  parse: (document: string, documentName: string) => ISolrDocument;
+  parserConfig: ParserConfig<T>;
 }
 
-export interface ParserConfig {
-  parseTitle: () => string;
-  parseDate: () => Date;
-  parseTags: () => string[];
-  parseSections: () => string[];
-  parseSummary: () => string;
-  parseParagraphs: () => string[];
-  parseSnippets: () => string[];
+export interface ParserConfig<T extends string | Document> {
+  parseTitle: (document: T) => string;
+  parseDate: (document: T) => Date;
+  parseTags: (document: T) => string[];
+  parseSections: (document: T) => string[];
+  parseSummary: (document: T) => string;
+  parseParagraphs: (document: T) => string[];
+  parseSnippets: (document: T) => string[];
 }
 
 export type MetadataObj = {

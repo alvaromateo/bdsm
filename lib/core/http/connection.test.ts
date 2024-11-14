@@ -5,7 +5,7 @@ import { InvalidJSON, RequestFailure, RequestNotSent, ResponseNotOk } from './co
 const TEST_URL = 'http://localhost:3000/';
 const TEST_TIMEOUT = 150;
 
-describe('Connection', () => {
+describe('http > connection', () => {
   let fetchMock: jest.Spied<typeof fetch> | undefined;
 
   const parseResponseMock = jest.fn(
