@@ -1,5 +1,6 @@
 import { IDocumentParser, ParserConfig } from '../parser';
 import { ISolrDocument, SolrDocument } from '../solrDocument';
+import { getTextWithoutTags } from '../utils';
 
 export type ParserConfigOptions = Partial<ParserConfig<Document>>;
 
@@ -55,7 +56,7 @@ const defaultHtmlParserConfig: ParserConfig<Document> = {
    */
   parseTitle: (document: Document): string => {
     const element = document.querySelector('[data-bdsm="title"]');
-    return '';
+    return getTextWithoutTags(element?.innerHTML || '');
   },
 
   /**
@@ -73,7 +74,9 @@ const defaultHtmlParserConfig: ParserConfig<Document> = {
    * @returns the date of the post.
    */
   parseDate: (document: Document): Date => {
-    return new Date();
+    const element = document.querySelector('[data-bdsm="date"]');
+    const dateString = getTextWithoutTags(element?.innerHTML || '');
+    return dateString ? new Date(dateString) : new Date();
   },
 
   /**
@@ -93,7 +96,15 @@ const defaultHtmlParserConfig: ParserConfig<Document> = {
    * @returns the tags of the post.
    */
   parseTags: (document: Document): string[] => {
-    return [];
+    const element = document.querySelector('[data-bdsm="tags"]');
+    const tagElements = element?.querySelectorAll('li');
+    const tags = [];
+    for (const tag of tagElements || []) {
+      if (tag.innerHTML) {
+        tags.push(getTextWithoutTags(tag.innerHTML));
+      }
+    }
+    return tags;
   },
 
   /**
@@ -112,7 +123,16 @@ const defaultHtmlParserConfig: ParserConfig<Document> = {
    * @returns the sections of the post, which consist of each of the headings it has.
    */
   parseSections: (document: Document): string[] => {
-    return [];
+    const elements = Array.from(
+      document.querySelectorAll('h1, h2, h3, h4, h5, h6').values(),
+    ).filter((elem) => elem.getAttribute('data-bdsm') !== 'title');
+    const headings = [];
+    for (const heading of elements || []) {
+      if (heading.innerHTML) {
+        headings.push(getTextWithoutTags(heading.innerHTML));
+      }
+    }
+    return headings;
   },
 
   /**
@@ -121,9 +141,7 @@ const defaultHtmlParserConfig: ParserConfig<Document> = {
    * this method looks for an HTML element with the following attribute.
    *
    * ```html
-   * <h2>This is a subtitle</h2>
-   * <p>Random text</p>
-   * <h3>Nested section</h3>
+   * <p data-bdsm="summary">Summary text</p>
    * ```
    *
    * The method returns a string with the post introduction.
@@ -132,7 +150,8 @@ const defaultHtmlParserConfig: ParserConfig<Document> = {
    * @returns the summary/introduction of the post.
    */
   parseSummary: (document: Document): string => {
-    return '';
+    const element = document.querySelector('[data-bdsm="summary"]');
+    return getTextWithoutTags(element?.innerHTML || '');
   },
 
   /**
@@ -143,7 +162,14 @@ const defaultHtmlParserConfig: ParserConfig<Document> = {
    * @returns all the paragraphs of the post.
    */
   parseParagraphs: (document: Document): string[] => {
-    return [];
+    const elements = document.querySelectorAll('p');
+    const paragraphs = [];
+    for (const paragraph of elements || []) {
+      if (paragraph.innerHTML) {
+        paragraphs.push(getTextWithoutTags(paragraph.innerHTML));
+      }
+    }
+    return paragraphs;
   },
 
   /**
@@ -154,6 +180,13 @@ const defaultHtmlParserConfig: ParserConfig<Document> = {
    * @returns all the code snippets present, if any.
    */
   parseSnippets: (document: Document): string[] => {
-    return [];
+    const elements = document.querySelectorAll('code');
+    const snippets = [];
+    for (const snippet of elements || []) {
+      if (snippet.innerHTML) {
+        snippets.push(getTextWithoutTags(snippet.innerHTML));
+      }
+    }
+    return snippets;
   },
 };
