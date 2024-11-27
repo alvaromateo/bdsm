@@ -40,5 +40,10 @@
   "prettier": {
     "printWidth": 100,
     "singleQuote": true
+  },
+  "jest": {
+    "setupFiles": [
+      "./lib/jest/testHelpers.ts"
+    ]
   }
 }

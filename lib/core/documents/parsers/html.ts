@@ -18,7 +18,14 @@ export default class HtmlParser implements IDocumentParser<Document> {
   }
 
   parse(document: string, documentName: string): ISolrDocument {
-    const documentObj = new DOMParser().parseFromString(document, 'text/html');
+    let documentObj: Document | undefined;
+    try {
+      documentObj = new DOMParser().parseFromString(document, 'text/html');
+    } catch (error) {
+      console.error(`Could not parse ${documentName}:`, error);
+      return new SolrDocument(`${this.baseBlogUrl}/${documentName}`);
+    }
+
     const title = this.parserConfig.parseTitle(documentObj);
     const date = this.parserConfig.parseDate(documentObj);
     const tags = this.parserConfig.parseTags(documentObj);
