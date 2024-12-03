@@ -8,7 +8,7 @@ export interface IDocumentParser<T extends string | Document> {
 
 export interface ParserConfig<T extends string | Document> {
   parseTitle: (document: T) => string;
-  parseDate: (document: T) => Date;
+  parseDate: (document: T) => Date | null;
   parseTags: (document: T) => string[];
   parseSections: (document: T) => string[];
   parseSummary: (document: T) => string;

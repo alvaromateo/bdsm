@@ -1,6 +1,7 @@
 import { IDocumentParser, ParserConfig } from '../parser';
 import { ISolrDocument, SolrDocument } from '../solrDocument';
 import { getTextWithoutTags } from '../utils';
+import { JSDOM } from 'jsdom';
 
 export type ParserConfigOptions = Partial<ParserConfig<Document>>;
 
@@ -20,7 +21,7 @@ export default class HtmlParser implements IDocumentParser<Document> {
   parse(document: string, documentName: string): ISolrDocument {
     let documentObj: Document | undefined;
     try {
-      documentObj = new DOMParser().parseFromString(document, 'text/html');
+      documentObj = new JSDOM(document).window.document;
     } catch (error) {
       console.error(`Could not parse ${documentName}:`, error);
       return new SolrDocument(`${this.baseBlogUrl}/${documentName}`);
@@ -80,10 +81,10 @@ const defaultHtmlParserConfig: ParserConfig<Document> = {
    * @param document a parsed Document object of the full post HTML text.
    * @returns the date of the post.
    */
-  parseDate: (document: Document): Date => {
+  parseDate: (document: Document): Date | null => {
     const element = document.querySelector('[data-bdsm="date"]');
     const dateString = getTextWithoutTags(element?.innerHTML || '');
-    return dateString ? new Date(dateString) : new Date();
+    return dateString ? new Date(dateString) : null;
   },
 
   /**

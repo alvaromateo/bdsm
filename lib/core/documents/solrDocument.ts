@@ -1,7 +1,7 @@
 export interface ISolrDocument {
   url: string;
   title: string;
-  date: Date;
+  date: Date | null;
   tags: string[];
   sections: string[];
   summary: string;
@@ -12,7 +12,7 @@ export interface ISolrDocument {
 export class SolrDocument implements ISolrDocument {
   url: string;
   title: string;
-  date: Date;
+  date: Date | null;
   tags: string[];
   sections: string[];
   summary: string;
@@ -27,7 +27,7 @@ export class SolrDocument implements ISolrDocument {
   constructor(
     url: string,
     title?: string,
-    date?: Date,
+    date?: Date | null,
     tags?: string[],
     sections?: string[],
     summary?: string,
@@ -36,7 +36,7 @@ export class SolrDocument implements ISolrDocument {
   ) {
     this.url = url;
     this.title = title || '';
-    this.date = date || new Date();
+    this.date = date || null;
     this.tags = tags || [];
     this.sections = sections || [];
     this.summary = summary || '';
