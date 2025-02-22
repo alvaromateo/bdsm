@@ -112,6 +112,16 @@ export const getTagName = (text: string, start: number = 0): string => {
   return text.slice(startName, index);
 };
 
+export const advanceUntilEndOfCodeBlock = (lines: string[], lineNum: number): number => {
+  let index = lineNum;
+  let line = lines[index];
+  while (!line.match(RegexConstants.codeBlock)) {
+    ++index;
+    line = lines[index];
+  }
+  return index;
+};
+
 export const RegexConstants = {
   emptyLine: /^\s*$/m,
   newLine: /\r?\n|\r|\n/g,

@@ -57,8 +57,10 @@ describe('documents > parsers > multiMarkdown', () => {
   });
 
   it('should use provided parsing functions', () => {
-    const htmlParser = new MultiMarkdownParser('/blog', { parseTitle: () => 'My own title' });
-    const solrDoc = htmlParser.parse(mdSample, 'doc');
+    const multiMarkdownParser = new MultiMarkdownParser('/blog', {
+      parseTitle: () => 'My own title',
+    });
+    const solrDoc = multiMarkdownParser.parse(mdSample, 'doc');
     expect(solrDoc.url).toBe('/blog/doc');
     expect(solrDoc.title).toBe('My own title');
   });
