@@ -1,4 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "files": ["./lib/jest/helpers.d.ts"]
-}

@@ -1,15 +1,13 @@
-import { IDocumentParser, ParserConfig } from '../parser';
+import { IDocumentParser, ParserConfig, DocumentParserConfigOptions } from '../parser';
 import { ISolrDocument, SolrDocument } from '../solrDocument';
 import { getTextWithoutTags } from '../utils';
 import { JSDOM } from 'jsdom';
-
-export type ParserConfigOptions = Partial<ParserConfig<Document>>;
 
 export default class HtmlParser implements IDocumentParser<Document> {
   baseBlogUrl: string;
   parserConfig: ParserConfig<Document>;
 
-  constructor(baseBlogUrl: string, configOptions?: ParserConfigOptions) {
+  constructor(baseBlogUrl: string, configOptions?: DocumentParserConfigOptions) {
     this.baseBlogUrl = baseBlogUrl;
     // remove last slash if present
     if (this.baseBlogUrl.lastIndexOf('/') === this.baseBlogUrl.length - 1) {
@@ -27,13 +25,13 @@ export default class HtmlParser implements IDocumentParser<Document> {
       return new SolrDocument(`${this.baseBlogUrl}/${documentName}`);
     }
 
-    const title = this.parserConfig.parseTitle(documentObj);
-    const date = this.parserConfig.parseDate(documentObj);
-    const tags = this.parserConfig.parseTags(documentObj);
-    const sections = this.parserConfig.parseSections(documentObj);
-    const summary = this.parserConfig.parseSummary(documentObj);
-    const paragraphs = this.parserConfig.parseParagraphs(documentObj);
-    const snippets = this.parserConfig.parseSnippets(documentObj);
+    const title = this.parserConfig.parseTitle.call({}, documentObj);
+    const date = this.parserConfig.parseDate.call({}, documentObj);
+    const tags = this.parserConfig.parseTags.call({}, documentObj);
+    const sections = this.parserConfig.parseSections.call({}, documentObj);
+    const summary = this.parserConfig.parseSummary.call({}, documentObj);
+    const paragraphs = this.parserConfig.parseParagraphs.call({}, documentObj);
+    const snippets = this.parserConfig.parseSnippets.call({}, documentObj);
 
     return new SolrDocument(
       `${this.baseBlogUrl}/${documentName}`,
@@ -62,7 +60,7 @@ const defaultHtmlParserConfig: ParserConfig<Document> = {
    * @param document a parsed Document object of the full post HTML text.
    * @returns the title of the post.
    */
-  parseTitle: (document: Document): string => {
+  parseTitle: function (document: Document): string {
     const element = document.querySelector('[data-bdsm="title"]');
     return getTextWithoutTags(element?.innerHTML || '');
   },
@@ -81,7 +79,7 @@ const defaultHtmlParserConfig: ParserConfig<Document> = {
    * @param document a parsed Document object of the full post HTML text.
    * @returns the date of the post.
    */
-  parseDate: (document: Document): Date | null => {
+  parseDate: function (document: Document): Date | null {
     const element = document.querySelector('[data-bdsm="date"]');
     const dateString = getTextWithoutTags(element?.innerHTML || '');
     return dateString ? new Date(dateString) : null;
@@ -103,7 +101,7 @@ const defaultHtmlParserConfig: ParserConfig<Document> = {
    * @param document a parsed Document object of the full post HTML text.
    * @returns the tags of the post.
    */
-  parseTags: (document: Document): string[] => {
+  parseTags: function (document: Document): string[] {
     const element = document.querySelector('[data-bdsm="tags"]');
     const tagElements = element?.querySelectorAll('li');
     const tags = [];
@@ -130,7 +128,7 @@ const defaultHtmlParserConfig: ParserConfig<Document> = {
    * @param document a parsed Document object of the full post HTML text.
    * @returns the sections of the post, which consist of each of the headings it has.
    */
-  parseSections: (document: Document): string[] => {
+  parseSections: function (document: Document): string[] {
     const elements = Array.from(
       document.querySelectorAll('h1, h2, h3, h4, h5, h6').values(),
     ).filter((elem) => elem.getAttribute('data-bdsm') !== 'title');
@@ -157,7 +155,7 @@ const defaultHtmlParserConfig: ParserConfig<Document> = {
    * @param document a parsed Document object of the full post HTML text.
    * @returns the summary/introduction of the post.
    */
-  parseSummary: (document: Document): string => {
+  parseSummary: function (document: Document): string {
     const element = document.querySelector('[data-bdsm="summary"]');
     return getTextWithoutTags(element?.innerHTML || '');
   },
@@ -169,7 +167,7 @@ const defaultHtmlParserConfig: ParserConfig<Document> = {
    * @param document a parsed Document object of the full post HTML text.
    * @returns all the paragraphs of the post.
    */
-  parseParagraphs: (document: Document): string[] => {
+  parseParagraphs: function (document: Document): string[] {
     const elements = document.querySelectorAll('p');
     const paragraphs = [];
     for (const paragraph of elements || []) {
@@ -187,7 +185,7 @@ const defaultHtmlParserConfig: ParserConfig<Document> = {
    * @param document a parsed Document object of the full post HTML text.
    * @returns all the code snippets present, if any.
    */
-  parseSnippets: (document: Document): string[] => {
+  parseSnippets: function (document: Document): string[] {
     const elements = document.querySelectorAll('code');
     const snippets = [];
     for (const snippet of elements || []) {

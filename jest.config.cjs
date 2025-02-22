@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 const { pathsToModuleNameMapper } = require('ts-jest');
-const { compilerOptions } = require('./tsconfig');
+const { compilerOptions } = require('./tsconfig.json');
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
@@ -11,11 +11,8 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths ?? {}),
-  globals: {
-    loadFile: (name) => {
-      const file = path.join(__dirname, 'test', name);
-      return fs.readFileSync(file, { encoding: 'utf8' });
-    },
+  transform: {
+    '.+\\.(css|less|sass|scss|png|jpg|gif|ttf|woff|woff2|svg)$': 'jest-transform-stub',
   },
 };
 

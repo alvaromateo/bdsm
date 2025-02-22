@@ -5,7 +5,7 @@ export default class FrontMatterParser implements IDocumentParser {}
 
 class DefaultFrontMatterParserConfig implements ParserConfig {}
 
-const extractMetadata = (markdown: string) => {
+export const extractYamlMetadata = (markdown: string) => {
   const charactersBetweenGroupedHyphens = /^---([\s\S]*?)---/;
   const metadataMatched = markdown.match(charactersBetweenGroupedHyphens);
   let metadata: string | null = null;

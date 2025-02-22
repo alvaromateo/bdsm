@@ -111,3 +111,12 @@ export const getTagName = (text: string, start: number = 0): string => {
   }
   return text.slice(startName, index);
 };
+
+export const RegexConstants = {
+  emptyLine: /^\s*$/m,
+  newLine: /\r?\n|\r|\n/g,
+  metadataKey: /[a-zA-Z0-9]/,
+  section: /\s*##+\s*(.+)$/gm,
+  title: /\s*#\s*(.+)$/,
+  codeBlock: /^\s*```/,
+};

@@ -1,4 +1,5 @@
 import HtmlParser from './html';
+import loadFile from '../../../jest/global';
 
 describe('documents > parsers > html', () => {
   const htmlDocError = loadFile('htmlDocError.html');
